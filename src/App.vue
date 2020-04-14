@@ -1,32 +1,40 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Nav />
+    <transition name="slide" mode="out-in">
+      <router-view/>
+    </transition>
   </div>
 </template>
 
-<style lang="scss">
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
+import Nav from '@/components/Nav.vue';
+@Component({
+  components: {
+    Nav,
+  },
+})
+export default class App extends Vue {}
+</script>
+
+<style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity 1s, transform 1s;
 }
+
+.slide-enter,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(-30%);
+}
+
 </style>

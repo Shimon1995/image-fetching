@@ -1,18 +1,28 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>{{ name }}</h1>    
+    <Form />
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+import Form from '@/components/Form.vue';
+import { Vue, Component } from 'vue-property-decorator';
 
-export default {
-  name: 'Home',
+@Component({
   components: {
-    HelloWorld
-  }
+    Form,
+  },
+})
+export default class extends Vue {
+  private name = 'Input Form';
 }
 </script>
+
+<style scoped>
+  .home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>

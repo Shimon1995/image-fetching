@@ -1,0 +1,89 @@
+<template>
+    <form @submit="alrt_image">
+        <input type="text" name="url" autocomplete="off" v-model="input" required />
+        <label for="url" class="label-url">
+            <span class="content-url">Image</span>
+        </label>
+    </form>
+</template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
+
+@Component({})
+export default class Form extends Vue {
+
+    private input = '';
+
+    protected alrt_image(event: Event): void {
+        event.preventDefault();
+        this.$store.commit('add_image', this.input);
+        this.input = '';
+    }
+}
+</script>
+
+<style scoped>
+    form {
+        font-family: sans-serif;
+        width: 30%;
+        position: relative;
+        height: 50px;
+        margin: 150px auto;
+        overflow: hidden;
+    }
+
+    form input {
+        width: 100%;
+        height: 100%;
+        color: #595f6e;
+        padding-top: 20px;
+        border: none;
+        padding: 0;
+        padding-top: 10px;
+        outline: none;
+    }
+
+    form label {
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        pointer-events: none;
+        border-bottom: 1px solid black;
+    }
+
+    form label::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border-bottom: 3px solid #5fa8d3;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .content-url {
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        transition: all 0.3s ease;
+    }
+
+    form input:valid + .label-url .content-url,
+    form input:focus + .label-url .content-url {
+        transform: translateY(-150%);
+        font-size: 14px;
+        color: #5fa8d3;
+    }
+
+    form input:focus + .label-url::after {
+        transform: translateX(0%);
+    }
+
+</style>
