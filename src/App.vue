@@ -8,17 +8,25 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import { Vue, Component } from 'vue-property-decorator';
 import Nav from '@/components/Nav.vue';
 @Component({
   components: {
     Nav,
   },
+  async beforeCreate() {
+    await this.$store.commit('getAlbumNames');
+  },
 })
 export default class App extends Vue {}
 </script>
 
 <style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
 #app {
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;

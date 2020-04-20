@@ -1,21 +1,22 @@
 <template>
     <div id="nav">
-      <router-link to="/">Form</router-link> |
-      <router-link to="/gallery">Gallery</router-link>
-      <br />
-      <a href="" @click="download_images">Download</a>
+      <router-link to="/">Form</router-link>
+      <router-link v-for="name in names" :key="name" :to="'/gallery/'+name">{{ ` ${name} ` }}</router-link>
     </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import axios from 'axios';
 import fileDownload from 'js-file-download';
+import axios from 'axios';
+
+import { Vue, Component, Prop, PropSync, Watch } from 'vue-property-decorator';
+
 @Component({})
 export default class Nav extends Vue {
-  private download_images(event: Event): void {
-    event.preventDefault();
-    this.$store.commit('download');
+  private names = this.$store.state.albumList;
+  @Watch('names')
+  public async albumNmaesChange(from: string[], to: string[]): Promise<void> {
+    await this.$store.dispatch('fetchAbumNames');
   }
 }
 </script>

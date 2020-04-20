@@ -2,12 +2,16 @@
     <form @submit="alrt_image">
         <input type="text" name="url" autocomplete="off" v-model="input" required />
         <label for="url" class="label-url">
-            <span class="content-url">Image</span>
+            <span class="content-url">Links</span>
         </label>
     </form>
 </template>
 
 <script lang="ts">
+import getUrls from 'get-urls';
+import axios from 'axios';
+import { remove } from 'lodash';
+
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component({})
@@ -17,7 +21,27 @@ export default class Form extends Vue {
 
     protected alrt_image(event: Event): void {
         event.preventDefault();
-        this.$store.commit('add_image', this.input);
+
+        let input = this.input;
+        input = input.replace(new RegExp('www.'), '');
+
+        const urls = Array.from( getUrls(this.input) );
+
+        for (const url of urls) {
+            input = input.replace(new RegExp(url), '');
+        }
+
+        input = input.replace(/\//gi, '');
+
+        const names = input.split(' ');
+        remove(names, (item: string) => item === '');
+
+        axios.post('http://192.168.1.117:3000', {
+            url: this.input,
+            names,
+        });
+
+        this.$store.dispatch('fetchAbumNames');
         this.input = '';
     }
 }

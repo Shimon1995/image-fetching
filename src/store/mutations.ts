@@ -1,29 +1,18 @@
 import axios from 'axios';
-import fileDownload from 'js-file-download';
 
-import ImgUrl from './ImgUrl';
-import { State } from './state.interface';
+import { State } from './store.interface';
 
 export const mutations = {
-  download: (state: State) => {
-    state.img_urls.forEach(({url}) =>
-    axios({
-      url,
-      method: 'GET',
-      responseType: 'blob',
-    })
-    .then(({ data }) => {
-      if ((data.type === 'image/jpeg'
-        || data.type === 'image/jpg'
-        || data.type === 'image/png')
-        && data.size >= 250) {
-        fileDownload(data, 'image.png');
-      }
-      }),
-     );
+
+  async fetchAlbum(state: State, albumName: string): Promise<void> {
+    const { data } = await axios.get(`http://192.168.1.117:3000/${albumName}`);
+    state.data.length = 0;
+    state.data.push(...data);
   },
-  add_image: (state: State, url: string) => {
-    const imgurl = new ImgUrl(url);
-    state.img_urls.push(imgurl);
+
+  async getAlbumNames(state: State): Promise<void> {
+    const { data } = await axios.get('http://192.168.1.117:3000/album_list');
+    state.albumList.length = 0;
+    state.albumList.push(...data);
   },
 };
