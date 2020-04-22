@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/animejs": "^3.1.0",
     "@types/lodash": "^4.14.150",
     "animate.css": "^3.7.2",
+    "animejs": "^3.2.0",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "get-urls": "^9.2.0",

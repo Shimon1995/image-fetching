@@ -21,8 +21,12 @@ export default class extends Vue {
 
 <style scoped>
   .home {
+    margin: 8rem 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  h1 {
+    font-weight: 300;
   }
 </style>

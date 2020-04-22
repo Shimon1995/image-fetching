@@ -1,10 +1,17 @@
 <template>
+<div class="albums">
   <div class="gallery">
+    <transition name="popup">
+      <div v-if="imageClose" class="image_close">
+        <img :src="imageSrc" @click="imageClose = !imageClose" v-if="imageClose" />
+      </div>
+    </transition>
     <div class="img" v-for="img in images" :key="img" >
-      <img :src="img" />
+      <img class="images" :src="img" @click="increaseImage" />
       <button @click="removeImage">Remove</button>
     </div>
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -18,7 +25,14 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 })
 export default class Gallery extends Vue {
 
+  public imageSrc: string = '';
+  public imageClose = false;
   private images = this.$store.state.data;
+
+  public increaseImage(event: any): void {
+    this.imageClose = !this.imageClose;
+    this.imageSrc = event.target.src;
+  }
 
   @Watch('images')
   public onImagesChange(to: string[], from: string[]): void {
@@ -26,17 +40,17 @@ export default class Gallery extends Vue {
   }
 
   @Watch('$route')
-  public async onRouteChanged(to: string, from: string): Promise<void> {
+  public async onRouteChanged(to: any, from: any): Promise<void> {
     this.$store.dispatch('fetchAlbum', this.$route.params.album_name);
   }
 
   private removeImage(event: any) {
 
     let src: string = event.target.parentElement.firstChild.src;
-    src = src.replace(new RegExp(`http://localhost:3000/${this.$route.params.album_name}/image`), '');
+    src = src.replace(new RegExp(`http://localhost:3000/api/images/${this.$route.params.album_name}/image`), '');
     src = src.replace(/\.[^]*/gi, '');
 
-    axios.delete(`http://192.168.1.117:3000/${this.$route.params.album_name}`, {data: {
+    axios.delete(`http://192.168.1.117:3000/api/${this.$route.params.album_name}`, {data: {
       imagenumber: src,
     }});
   }
@@ -44,9 +58,32 @@ export default class Gallery extends Vue {
 </script>
 
 <style scroped>
+  .image_close {
+    position: fixed;
+    background: rgba(52, 62, 63, 0.363);
+    left: -50%;
+    top: -140%;
+    width: 200%;
+    height: 300%;
+    z-index: 7;
+    display: grid;
+	  place-items: start center;
+  }
 
+  .image_close>img {
+    position: relative;
+    top: 50%;
+    min-width: 400px;
+    min-height: 500px;
+    max-width: 1200px;
+    max-height: 800px;
+  }
+
+  .albums {
+    overflow: hidden;
+    min-height: 110vh;
+  }
   .gallery {
-    /* width: 50%; */
     padding: 0;
     margin: 5rem 18rem;
 
@@ -77,12 +114,12 @@ export default class Gallery extends Vue {
     height: 480px;
   }
 
-  img {
+  .images {
     max-width: 240px;
-    /* height: 240px; */
     position: relative;
     margin: 0;
     padding: 0;
+    z-index: 2;
   }
 
   button {
@@ -100,5 +137,19 @@ export default class Gallery extends Vue {
       margin: 0;
       padding: 0 25%;
     }
+  }
+
+  .popup-enter-active,
+  .popup-leave-active {
+    transition: opacity 1s, transform 1.5s;
+  }
+
+  .popup-enter{
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  .popup-leave-to {
+    opacity: 0;
+    transform: scale(0.7);
   }
 </style>

@@ -2,7 +2,7 @@
   <div id="app">
     <Nav />
     <transition name="slide" mode="out-in">
-      <router-view/>
+      <router-view />
     </transition>
   </div>
 </template>
@@ -11,6 +11,7 @@
 import axios from 'axios';
 import { Vue, Component } from 'vue-property-decorator';
 import Nav from '@/components/Nav.vue';
+
 @Component({
   components: {
     Nav,
@@ -19,7 +20,9 @@ import Nav from '@/components/Nav.vue';
     await this.$store.commit('getAlbumNames');
   },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+
+}
 </script>
 
 <style>
@@ -36,13 +39,13 @@ html, body {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: opacity 1s, transform 1s;
+  transition: opacity 1.5s, transform 1.5s;
 }
 
 .slide-enter,
 .slide-leave-to {
   opacity: 0;
-  transform: translateX(-30%);
+  transform: translateY(30%);
 }
 
 </style>

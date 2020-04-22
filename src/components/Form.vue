@@ -36,7 +36,7 @@ export default class Form extends Vue {
         const names = input.split(' ');
         remove(names, (item: string) => item === '');
 
-        axios.post('http://192.168.1.117:3000', {
+        axios.post('http://localhost:3000/api', {
             url: this.input,
             names,
         });
