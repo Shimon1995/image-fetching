@@ -11,6 +11,7 @@
       <button @click="removeImage">Remove</button>
     </div>
   </div>
+  <button id="remove_album" @click="removeAlbum">REMOVE ALBUM</button>
 </div>
 </template>
 
@@ -44,13 +45,21 @@ export default class Gallery extends Vue {
     this.$store.dispatch('fetchAlbum', this.$route.params.album_name);
   }
 
+  private removeAlbum(): void {
+    const name = this.$route.params.album_name;
+    axios.delete(`http://localhost:3000/api/delete_album/${name}`);
+    this.$router.push('/');
+  }
+
   private removeImage(event: any) {
 
     let src: string = event.target.parentElement.firstChild.src;
     src = src.replace(new RegExp(`http://localhost:3000/api/images/${this.$route.params.album_name}/image`), '');
     src = src.replace(/\.[^]*/gi, '');
 
-    axios.delete(`http://192.168.1.117:3000/api/${this.$route.params.album_name}`, {data: {
+    const name = this.$route.params.album_name;
+
+    axios.delete(`http://localhost:3000/api/${name}`, {data: {
       imagenumber: src,
     }});
   }
@@ -80,12 +89,15 @@ export default class Gallery extends Vue {
   }
 
   .albums {
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     min-height: 110vh;
   }
   .gallery {
     padding: 0;
     margin: 5rem 18rem;
+    margin-bottom: 22rem;
 
     display: grid;
 
@@ -130,6 +142,12 @@ export default class Gallery extends Vue {
     height: 2.8rem;
     width: 8rem;
     border-radius: 4px;
+  }
+
+  #remove_album {
+    background: rgb(255, 35, 64);
+    margin: 4rem auto;
+    margin-top: auto;
   }
 
   @media only screen and (max-width: 600px) {
