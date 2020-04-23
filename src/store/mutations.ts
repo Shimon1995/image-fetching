@@ -3,17 +3,24 @@ import axios from 'axios';
 import { State } from './store.interface';
 
 export const mutations = {
-
   async fetchAlbum(state: State, albumName: string): Promise<void> {
-    const { data } = await axios.get(`http://localhost:3000/api/${albumName}`);
+    const { data } = await axios.get(`${state.hostname}/api/${albumName}`);
+    const result = [];
+    for (const img of data) {
+      result.push(state.hostname + img);
+    }
     state.data.length = 0;
-    state.data.push(...data);
+    state.data.push(...result);
   },
 
   async getAlbumNames(state: State): Promise<void> {
-    const { data } = await axios.get('http://localhost:3000/api/album_list');
+    const { data } = await axios.get(`${state.hostname}/api/album_list`);
     state.albumList.length = 0;
     state.albumList.push(...data);
+  },
+
+  getHost(state: State, hostname: string): void {
+    state.hostname = hostname;
   },
 
   start() {
@@ -21,7 +28,7 @@ export const mutations = {
     if (a !== null) {
       setTimeout(() => {
         a.click();
-      }, 100);
+      }, 1000);
     }
   },
 };

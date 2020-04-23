@@ -18,6 +18,7 @@ import { Vue, Component } from 'vue-property-decorator';
 export default class Form extends Vue {
 
     private input = '';
+    private hostname = this.$store.state.hostname;
 
     protected alrt_image(event: Event): void {
         event.preventDefault();
@@ -36,7 +37,7 @@ export default class Form extends Vue {
         const names = input.split(' ');
         remove(names, (item: string) => item === '');
 
-        axios.post('http://localhost:3000/api', {
+        axios.post(`${this.hostname}/api`, {
             url: this.input,
             names,
         });

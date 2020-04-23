@@ -2,13 +2,13 @@
 <div class="albums">
   <div class="gallery">
     <transition name="popup">
-      <div v-if="imageClose" class="image_close">
-        <img :src="imageSrc" @click="imageClose = !imageClose" v-if="imageClose" />
+      <div v-if="imageOpen" class="image_close">
+        <img :src="imageSrc" @click="closeImage" v-if="imageOpen" />
       </div>
     </transition>
     <div class="img" v-for="img in images" :key="img" >
-      <img class="images" :src="img" @click="increaseImage" />
-      <button @click="removeImage">Remove</button>
+      <img class="images" :src="img" @click="openImage" />
+      <button id="remove_image" @click="removeImage">Remove</button>
     </div>
   </div>
   <button id="remove_album" @click="removeAlbum">REMOVE ALBUM</button>
@@ -25,14 +25,16 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
   },
 })
 export default class Gallery extends Vue {
-
   public imageSrc: string = '';
-  public imageClose = false;
-  private images = this.$store.state.data;
+  public imageOpen = false;
+  private hostname = this.$store.state.hostname;
+  private images: string[] = this.$store.state.data;
 
-  public increaseImage(event: any): void {
-    this.imageClose = !this.imageClose;
-    this.imageSrc = event.target.src;
+  @Watch('images')
+  public onEmptyAlbum(to: string[], from: string[]): void {
+    if (this.images.length === 0) {
+      this.removeAlbum();
+    }
   }
 
   @Watch('images')
@@ -45,21 +47,40 @@ export default class Gallery extends Vue {
     this.$store.dispatch('fetchAlbum', this.$route.params.album_name);
   }
 
-  private removeAlbum(): void {
-    const name = this.$route.params.album_name;
-    axios.delete(`http://localhost:3000/api/delete_album/${name}`);
-    this.$router.push('/');
+  public increaseImage(event: any): void {
+    this.imageOpen = !this.imageOpen;
+    this.imageSrc = event.target.src;
   }
 
-  private removeImage(event: any) {
+  private openImage(event: any): void {
+    this.imageSrc = event.target.src;
+    this.imageOpen = true;
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = '0.25rem';
+  }
+
+  private closeImage(): void {
+    this.imageOpen = false;
+    setTimeout(() => {
+      document.body.style.overflow = 'auto';
+      document.body.style.paddingRight = '0rem';
+      }, 1000);
+  }
+
+  private removeAlbum(): void {
+    const name = this.$route.params.album_name;
+    axios.delete(`${this.hostname}/api/delete_album/${name}`);
+    this.$router.push('/');
+  }
+  private removeImage(event: any): void {
 
     let src: string = event.target.parentElement.firstChild.src;
-    src = src.replace(new RegExp(`http://localhost:3000/api/images/${this.$route.params.album_name}/image`), '');
+    src = src.replace(new RegExp(`${this.hostname}/api/images/${this.$route.params.album_name}/image`), '');
     src = src.replace(/\.[^]*/gi, '');
 
     const name = this.$route.params.album_name;
 
-    axios.delete(`http://localhost:3000/api/${name}`, {data: {
+    axios.delete(`${this.hostname}/api/${name}`, {data: {
       imagenumber: src,
     }});
   }
@@ -101,7 +122,8 @@ export default class Gallery extends Vue {
 
     display: grid;
 
-    gap: 4rem;
+    /* gap: 12rem; */
+    row-gap: 6rem;
 
     grid-template-columns: repeat(3, minmax(240px, 1fr));
     grid-auto-rows: 350px;
@@ -123,7 +145,9 @@ export default class Gallery extends Vue {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 480px;
+    justify-items: center;
+    justify-content: center;
+    height: 520px;
   }
 
   .images {
@@ -135,19 +159,30 @@ export default class Gallery extends Vue {
   }
 
   button {
-    margin-top: 0.2rem;
     border: none;
-    background: #5FA8D3;
     color: white;
     height: 2.8rem;
     width: 8rem;
     border-radius: 4px;
   }
 
+  #remove_image {
+    margin-top: 0.4rem;
+    background: #5FA8D3;
+    transition: 1s;
+  }
+  #remove_image:hover {
+    box-shadow: 0 0 12px 1px #5FA8D3;
+  }
+
   #remove_album {
+    transition: 1.2s;
     background: rgb(255, 35, 64);
     margin: 4rem auto;
     margin-top: auto;
+  }
+  #remove_album:hover {
+    box-shadow: 0 0 12px 3px rgb(255, 35, 64);
   }
 
   @media only screen and (max-width: 600px) {
