@@ -16,7 +16,7 @@
     "core-js": "^3.6.4",
     "get-urls": "^9.2.0",
     "js-file-download": "^0.4.11",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "stylus-loader": "^3.0.2",
     "v-animate-css": "^0.0.3",
     "vue": "^2.6.11",
